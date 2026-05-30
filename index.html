@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Página estática responsiva sobre hortas comunitárias urbanas, criada com HTML5 semântico e CSS3.">
+  <title>Raízes Urbanas | Hortas Comunitárias</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo principal</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#inicio" aria-label="Raízes Urbanas, voltar ao início">Raízes Urbanas</a>
+
+      <nav class="main-nav" aria-label="Navegação principal">
+        <ul>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#atividades">Atividades</a></li>
+          <li><a href="#dicas">Dicas</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="hero" id="inicio" aria-labelledby="titulo-principal">
+      <img
+        class="hero-image"
+        src="assets/horta-comunitaria.png"
+        alt="Pessoas cuidando de canteiros em uma horta comunitária urbana durante uma manhã ensolarada."
+        width="1672"
+        height="941"
+      >
+      <div class="hero-content">
+        <p class="eyebrow">Comunidade, alimento e sustentabilidade</p>
+        <h1 id="titulo-principal">Raízes Urbanas</h1>
+        <p>
+          Um espaço informativo para incentivar hortas comunitárias, educação ambiental
+          e participação dos moradores na transformação de áreas urbanas.
+        </p>
+        <a class="button" href="#contato">Participar do projeto</a>
+      </div>
+    </section>
+
+    <section class="section split-section" id="sobre" aria-labelledby="sobre-titulo">
+      <div>
+        <p class="section-kicker">Sobre o projeto</p>
+        <h2 id="sobre-titulo">Uma página para aproximar pessoas da agricultura urbana</h2>
+        <p>
+          A página Raízes Urbanas apresenta informações sobre hortas comunitárias,
+          reaproveitamento de espaços e ações coletivas para tornar o bairro mais
+          saudável. O conteúdo foi organizado para ser lido com facilidade em celulares,
+          tablets e computadores.
+        </p>
+        <p>
+          O projeto utiliza HTML5 semântico para estruturar o conteúdo e CSS3 para
+          criar uma identidade visual clara, com bom contraste, navegação direta e
+          elementos interativos acessíveis.
+        </p>
+      </div>
+
+      <aside class="summary-panel" aria-labelledby="resumo-titulo">
+        <h3 id="resumo-titulo">Resumo da proposta</h3>
+        <ul>
+          <li>Incentivar o cultivo coletivo de alimentos.</li>
+          <li>Divulgar oficinas e encontros da comunidade.</li>
+          <li>Orientar moradores interessados em participar.</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="section" id="atividades" aria-labelledby="atividades-titulo">
+      <div class="section-heading">
+        <p class="section-kicker">Atividades</p>
+        <h2 id="atividades-titulo">Ações que fortalecem a comunidade</h2>
+        <p>
+          Cada atividade foi pensada para unir aprendizado, cuidado com o ambiente e
+          colaboração entre moradores.
+        </p>
+      </div>
+
+      <div class="card-grid">
+        <article class="activity-card">
+          <h3>Oficinas de plantio</h3>
+          <p>
+            Encontros práticos sobre preparo do solo, escolha de mudas, irrigação e
+            manutenção dos canteiros.
+          </p>
+        </article>
+
+        <article class="activity-card">
+          <h3>Compostagem doméstica</h3>
+          <p>
+            Orientações para transformar resíduos orgânicos em adubo e reduzir o
+            descarte de lixo comum.
+          </p>
+        </article>
+
+        <article class="activity-card">
+          <h3>Mutirões mensais</h3>
+          <p>
+            Momentos de limpeza, plantio e organização para manter a horta ativa e
+            acolhedora.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section tips-section" id="dicas" aria-labelledby="dicas-titulo">
+      <article class="tips-content">
+        <p class="section-kicker">Boas práticas</p>
+        <h2 id="dicas-titulo">Primeiros passos para cuidar de uma horta</h2>
+        <ol>
+          <li>Escolha um local com boa iluminação e acesso seguro para os participantes.</li>
+          <li>Separe canteiros por tipo de cultivo, como temperos, hortaliças e plantas medicinais.</li>
+          <li>Mantenha uma escala de cuidados para rega, limpeza e acompanhamento das mudas.</li>
+          <li>Registre as atividades para que novos voluntários entendam a rotina do projeto.</li>
+        </ol>
+      </article>
+
+      <aside class="event-panel" aria-labelledby="evento-titulo">
+        <h3 id="evento-titulo">Próximo encontro</h3>
+        <p><strong>Sábado, 6 de junho</strong></p>
+        <p>Oficina de compostagem e reorganização dos canteiros comunitários.</p>
+      </aside>
+    </section>
+
+    <section class="section contact-section" id="contato" aria-labelledby="contato-titulo">
+      <div class="contact-copy">
+        <p class="section-kicker">Contato</p>
+        <h2 id="contato-titulo">Inscreva-se para receber novidades</h2>
+        <p>
+          O formulário usa campos obrigatórios, tipos adequados de entrada e textos de
+          apoio para facilitar o preenchimento por diferentes usuários.
+        </p>
+      </div>
+
+      <form class="contact-form" action="#" method="post">
+        <fieldset>
+          <legend>Dados para inscrição</legend>
+
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="nome">Nome completo</label>
+              <input id="nome" name="nome" type="text" autocomplete="name" required minlength="3">
+            </div>
+
+            <div class="form-field">
+              <label for="email">E-mail</label>
+              <input id="email" name="email" type="email" autocomplete="email" required>
+            </div>
+
+            <div class="form-field">
+              <label for="telefone">Telefone</label>
+              <input id="telefone" name="telefone" type="tel" autocomplete="tel" placeholder="(00) 00000-0000">
+            </div>
+
+            <div class="form-field">
+              <label for="interesse">Área de interesse</label>
+              <select id="interesse" name="interesse" required>
+                <option value="">Selecione uma opção</option>
+                <option value="plantio">Oficinas de plantio</option>
+                <option value="compostagem">Compostagem</option>
+                <option value="mutirao">Mutirões</option>
+              </select>
+            </div>
+
+            <div class="form-field full-width">
+              <label for="mensagem">Mensagem</label>
+              <textarea
+                id="mensagem"
+                name="mensagem"
+                rows="5"
+                minlength="10"
+                placeholder="Conte como gostaria de participar"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="checkbox-field">
+            <input id="autorizacao" name="autorizacao" type="checkbox" required>
+            <label for="autorizacao">Autorizo o contato por e-mail sobre as atividades do projeto.</label>
+          </div>
+
+          <button class="button form-button" type="submit">Enviar inscrição</button>
+        </fieldset>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Projeto acadêmico desenvolvido por Rodrigo Tavares Vieira.</p>
+    <p>Raízes Urbanas - HTML5, CSS3, acessibilidade e responsividade.</p>
+  </footer>
+</body>
+</html>
