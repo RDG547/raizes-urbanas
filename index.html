@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Página estática responsiva sobre hortas comunitárias urbanas, criada com HTML5 semântico e CSS3.">
+  <meta name="description" content="Página responsiva sobre hortas comunitárias urbanas, criada com HTML5 semântico, CSS3 e JavaScript.">
   <title>Raízes Urbanas | Hortas Comunitárias</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Ir para o conteúdo principal</a>
@@ -14,14 +15,57 @@
     <div class="header-inner">
       <a class="brand" href="#inicio" aria-label="Raízes Urbanas, voltar ao início">Raízes Urbanas</a>
 
-      <nav class="main-nav" aria-label="Navegação principal">
-        <ul>
-          <li><a href="#sobre">Sobre</a></li>
-          <li><a href="#atividades">Atividades</a></li>
-          <li><a href="#dicas">Dicas</a></li>
-          <li><a href="#contato">Contato</a></li>
-        </ul>
-      </nav>
+      <div class="appbar-actions">
+        <nav class="main-nav" aria-label="Navegação principal">
+          <ul>
+            <li><a href="#sobre">Sobre</a></li>
+            <li><a href="#atividades">Atividades</a></li>
+            <li><a href="#dicas">Dicas</a></li>
+            <li><a href="#interacao">Interação</a></li>
+            <li><a href="#contato">Contato</a></li>
+          </ul>
+        </nav>
+
+        <div class="customize-menu">
+          <button
+            class="customize-toggle"
+            id="personalizacao-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="personalizacao-menu"
+          >
+            Personalizar
+          </button>
+
+          <div class="customize-dropdown" id="personalizacao-menu" hidden>
+            <div class="control-group">
+              <span class="control-label">Tema visual</span>
+              <div class="theme-actions" role="group" aria-label="Tema visual da página">
+                <button class="theme-button is-active" type="button" data-theme="verde" aria-pressed="true">Verde</button>
+                <button class="theme-button" type="button" data-theme="sol" aria-pressed="false">Solar</button>
+                <button class="theme-button" type="button" data-theme="noite" aria-pressed="false">Noturno</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label for="tamanho-texto">Tamanho do texto</label>
+              <div class="range-row">
+                <input id="tamanho-texto" type="range" min="16" max="22" value="16">
+                <output id="tamanho-texto-valor" for="tamanho-texto">16px</output>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label for="foco-comunitario">Foco do encontro</label>
+              <select id="foco-comunitario" name="foco-comunitario">
+                <option value="plantio">Oficinas de plantio</option>
+                <option value="compostagem">Compostagem doméstica</option>
+                <option value="mutirao">Mutirão mensal</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -56,9 +100,9 @@
           tablets e computadores.
         </p>
         <p>
-          O projeto utiliza HTML5 semântico para estruturar o conteúdo e CSS3 para
-          criar uma identidade visual clara, com bom contraste, navegação direta e
-          elementos interativos acessíveis.
+          O projeto utiliza HTML5 semântico para estruturar o conteúdo, CSS3 para
+          criar uma identidade visual clara e JavaScript para adicionar interações
+          com o usuário.
         </p>
       </div>
 
@@ -123,8 +167,23 @@
 
       <aside class="event-panel" aria-labelledby="evento-titulo">
         <h3 id="evento-titulo">Próximo encontro</h3>
-        <p><strong>Sábado, 6 de junho</strong></p>
-        <p>Oficina de compostagem e reorganização dos canteiros comunitários.</p>
+        <p><strong id="evento-data">Sábado, 11 de julho</strong></p>
+        <p id="evento-descricao">Oficina de plantio, preparo do solo e escolha de mudas para novos canteiros.</p>
+      </aside>
+    </section>
+
+    <section class="section interactive-section" id="interacao" aria-labelledby="interacao-titulo">
+      <div class="interactive-copy">
+        <p class="section-kicker">Interação</p>
+        <h2 id="interacao-titulo">Resultado das escolhas da horta</h2>
+        <p id="interacao-status">
+          Tema verde ativo: a página destaca o cultivo e a participação comunitária.
+        </p>
+      </div>
+
+      <aside class="interaction-result-panel" aria-labelledby="resultado-titulo">
+        <h3 id="resultado-titulo">Foco selecionado</h3>
+        <p id="foco-resultado">Área em destaque: oficinas de plantio.</p>
       </aside>
     </section>
 
@@ -138,19 +197,21 @@
         </p>
       </div>
 
-      <form class="contact-form" action="#" method="post">
+      <form class="contact-form" id="formulario-inscricao" action="#" method="post" novalidate>
         <fieldset>
           <legend>Dados para inscrição</legend>
 
           <div class="form-grid">
             <div class="form-field">
               <label for="nome">Nome completo</label>
-              <input id="nome" name="nome" type="text" autocomplete="name" required minlength="3">
+              <input id="nome" name="nome" type="text" autocomplete="name" required minlength="3" aria-describedby="nome-feedback">
+              <small class="field-message" id="nome-feedback"></small>
             </div>
 
             <div class="form-field">
               <label for="email">E-mail</label>
-              <input id="email" name="email" type="email" autocomplete="email" required>
+              <input id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-feedback">
+              <small class="field-message" id="email-feedback"></small>
             </div>
 
             <div class="form-field">
@@ -160,12 +221,13 @@
 
             <div class="form-field">
               <label for="interesse">Área de interesse</label>
-              <select id="interesse" name="interesse" required>
+              <select id="interesse" name="interesse" required aria-describedby="interesse-feedback">
                 <option value="">Selecione uma opção</option>
                 <option value="plantio">Oficinas de plantio</option>
                 <option value="compostagem">Compostagem</option>
                 <option value="mutirao">Mutirões</option>
               </select>
+              <small class="field-message" id="interesse-feedback"></small>
             </div>
 
             <div class="form-field full-width">
@@ -181,11 +243,13 @@
           </div>
 
           <div class="checkbox-field">
-            <input id="autorizacao" name="autorizacao" type="checkbox" required>
+            <input id="autorizacao" name="autorizacao" type="checkbox" required aria-describedby="autorizacao-feedback">
             <label for="autorizacao">Autorizo o contato por e-mail sobre as atividades do projeto.</label>
+            <small class="field-message checkbox-message" id="autorizacao-feedback"></small>
           </div>
 
           <button class="button form-button" type="submit">Enviar inscrição</button>
+          <p class="form-feedback" id="form-feedback" role="status" aria-live="polite"></p>
         </fieldset>
       </form>
     </section>
@@ -193,7 +257,7 @@
 
   <footer class="site-footer">
     <p>Projeto acadêmico desenvolvido por Rodrigo Tavares Vieira.</p>
-    <p>Raízes Urbanas - HTML5, CSS3, acessibilidade e responsividade.</p>
+    <p>Raízes Urbanas - HTML5, CSS3, JavaScript, acessibilidade e responsividade.</p>
   </footer>
 </body>
 </html>

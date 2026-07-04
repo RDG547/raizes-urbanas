@@ -1,50 +1,61 @@
 # Relatório de Desenvolvimento da Página Web
 
-**Nome do Aluno:** Rodrigo
-**Data:** 01 de junho de 2026
+**Curso:** Front-End
+**Projeto (disciplina):** Atividade Avaliativa Fase 2
+**Discente:** Rodrigo Tavares Vieira
+**Nome do Aluno:** Rodrigo Tavares Vieira
+**Data:** 03 de julho de 2026
 **Nome do Projeto:** Raízes Urbanas
 
 ## 1. Introdução
 
-O projeto **Raízes Urbanas** é uma página web estática criada para apresentar uma iniciativa de hortas comunitárias urbanas. O objetivo da página é divulgar a proposta do projeto, mostrar atividades da comunidade, oferecer dicas iniciais de participação e disponibilizar um formulário de inscrição para pessoas interessadas.
+O projeto **Raízes Urbanas** é uma página web criada para apresentar uma iniciativa de hortas comunitárias urbanas. O objetivo da página é divulgar a proposta do projeto, mostrar atividades da comunidade, oferecer dicas iniciais de participação e disponibilizar um formulário de inscrição para pessoas interessadas.
 
-A página se relaciona com os conteúdos estudados na Fase 1 porque aplica HTML5 semântico, boas práticas de acessibilidade, uso de imagem com texto alternativo, formulário com validação nativa e estilização com CSS3. Também foram utilizados recursos de layout responsivo para adaptar o conteúdo a diferentes tamanhos de tela.
+A página se relaciona com os conteúdos estudados na Fase 2 porque aplica JavaScript para manipular elementos do DOM, responder a eventos do usuário, alterar conteúdo, modificar estilos visuais e validar dados do formulário antes do envio. Além disso, o projeto mantém os conhecimentos de HTML5 semântico e CSS3 responsivo já aplicados na etapa anterior.
+
+Os principais elementos incluídos são cabeçalho com navegação interna e menu dropdown de personalização, seção principal com imagem, blocos informativos, cards de atividades, área de retorno das interações, informações de encontro e formulário de inscrição.
 
 ## 2. Estrutura da Página Web
 
-A estrutura foi organizada com elementos semânticos do HTML5. O arquivo `index.html` utiliza `header` para o cabeçalho, `nav` para a navegação principal, `main` para o conteúdo central, `section` para dividir os blocos de conteúdo, `article` para conteúdos independentes, `aside` para informações complementares e `footer` para o rodapé.
+A estrutura foi organizada em três arquivos principais: `index.html`, `styles.css` e `script.js`.
 
-O cabeçalho possui o nome do projeto e links de navegação interna para as seções Sobre, Atividades, Dicas e Contato. A página também inclui um link de salto para o conteúdo principal, o que melhora a navegação por teclado e por leitores de tela. A imagem principal possui atributo `alt`, descrevendo seu conteúdo de forma objetiva.
+O arquivo `index.html` utiliza elementos semânticos como `header`, `nav`, `main`, `section`, `article`, `aside`, `form` e `footer`. O cabeçalho possui links de navegação interna para as seções Sobre, Atividades, Dicas, Interação e Contato, além de um botão Personalizar que abre um menu dropdown com controles de tema, tamanho do texto e foco do encontro. A página também inclui um link de salto para o conteúdo principal, imagem com atributo `alt` e campos de formulário associados a seus respectivos rótulos.
 
-## 3. Estilização com CSS3
+O arquivo `styles.css` define a identidade visual, o layout responsivo, os estados dos botões, os temas visuais e a aparência das mensagens de validação. O arquivo `script.js` concentra a lógica interativa, selecionando elementos da página e alterando conteúdo, atributos e estilos com base nas ações do usuário.
 
-A estilização foi feita no arquivo `styles.css`. Foram definidas variáveis CSS para manter uma identidade visual consistente, com cores principais, cores de destaque, fundo, bordas e sombra. A tipografia usa fontes seguras do sistema, com tamanhos legíveis e boa hierarquia entre título, subtítulos e textos.
+## 3. Interações implementadas
 
-O layout utiliza **Flexbox** no cabeçalho, na navegação e no rodapé para alinhar os elementos de forma flexível. Também utiliza **CSS Grid** nas seções principais, nos cards de atividades e no formulário, permitindo uma organização clara em telas maiores e uma adaptação simples para telas menores.
+Foram implementadas interações com diferentes eventos em JavaScript. Os controles de personalização ficam no cabeçalho, dentro de um menu dropdown. A primeira interação ocorre no botão Personalizar, que abre e fecha o menu usando JavaScript.
 
-## 4. Acessibilidade e Responsividade
+A segunda interação ocorre nos botões de tema visual. Ao clicar em Verde, Solar ou Noturno, o JavaScript altera o atributo `data-theme` do `body`, muda as variáveis de cor aplicadas pelo CSS e atualiza o texto explicativo da área de interação.
 
-A acessibilidade foi considerada por meio do uso de tags semânticas, contraste adequado entre texto e fundo, foco visível em links, botões e campos de formulário, textos alternativos em imagem e rótulos associados aos campos do formulário. Os campos obrigatórios utilizam `required`, o e-mail usa `type="email"` e o nome possui `minlength`, aproveitando a validação nativa do HTML.
+A terceira interação ocorre no controle de tamanho de texto. Quando o usuário move o controle deslizante, o evento `input` altera dinamicamente a variável CSS `--base-font-size`, aplicada ao tamanho base da página, e atualiza o valor exibido na tela.
 
-A responsividade foi implementada com layouts fluidos, larguras máximas e media queries. Em telas menores, as colunas passam para uma única coluna, a navegação se reorganiza e o formulário fica mais confortável para preenchimento em celulares. Dessa forma, o conteúdo permanece acessível e organizado em dispositivos móveis, tablets e desktops.
+A quarta interação ocorre no seletor de foco do encontro. Ao escolher Plantio, Compostagem ou Mutirão, o evento `change` altera o texto da área em destaque e também modifica as informações do próximo encontro.
 
-## 5. Desafios e Soluções
+Também foi adicionada validação de formulário. Ao tentar enviar a inscrição, o evento `submit` verifica se nome, e-mail, área de interesse e autorização foram preenchidos corretamente. Caso exista erro, o envio é impedido e mensagens específicas são exibidas. Caso os dados estejam corretos, uma mensagem de confirmação aparece para o usuário.
 
-Um dos desafios foi equilibrar visual atrativo com boa legibilidade. Para resolver isso, foi aplicada uma camada escura sobre a imagem principal, garantindo contraste suficiente para o texto do destaque inicial.
+## 4. Detalhamento técnico
 
-Outro desafio foi organizar várias informações sem deixar a página confusa. A solução foi separar o conteúdo em seções bem definidas, usar cards apenas nas atividades e criar painéis complementares para informações rápidas. Também foi necessário ajustar o formulário para funcionar bem em telas pequenas, o que foi resolvido com CSS Grid e media queries.
+A manipulação do DOM foi feita no arquivo `script.js`. Foram utilizados métodos como `document.getElementById` para selecionar elementos específicos, como o botão de personalização, o menu dropdown, o parágrafo de status, o controle de tamanho, o seletor de foco, os textos do próximo encontro e os campos do formulário. Também foi utilizado `document.querySelectorAll` para selecionar todos os botões de tema.
 
-## 6. Conclusão
+A estilização dinâmica acontece de duas formas. Na primeira, o JavaScript modifica `document.body.dataset.theme`, permitindo que o CSS aplique cores diferentes conforme o tema selecionado. Na segunda, o JavaScript altera a variável CSS `--base-font-size` com `document.documentElement.style.setProperty`, fazendo o controle de tamanho afetar a página.
 
-Durante o desenvolvimento deste projeto, foi possível consolidar os conhecimentos de HTML5 e CSS3 estudados na primeira fase. A atividade ajudou a compreender como a estrutura semântica melhora a organização do conteúdo e como o CSS pode tornar uma página mais clara, agradável e responsiva.
+Os eventos foram registrados com `addEventListener`. Foram usados eventos de `click` no botão do dropdown e nos botões de tema, `input` no controle de tamanho de texto, `change` no seletor de foco e nos campos do formulário, além de `submit` no formulário de inscrição.
 
-Em projetos futuros, esses conhecimentos podem ser aplicados para criar sites mais completos, acessíveis e adaptáveis, sempre considerando a experiência do usuário em diferentes dispositivos e contextos de uso.
+Na validação, a função `validateField` verifica cada campo obrigatório e usa `classList.toggle`, `setAttribute` e `textContent` para marcar erros, atualizar `aria-invalid` e exibir mensagens de orientação. A função `validateForm` impede o envio padrão com `event.preventDefault()` quando há campos inválidos e exibe uma mensagem de sucesso quando os dados estão corretos.
 
-## 7. Anexos
+## 5. Conclusão
 
-Os arquivos HTML e CSS estão anexados para revisão:
+Durante o desenvolvimento deste projeto, foi possível consolidar os conhecimentos da Fase 2 sobre JavaScript aplicado a páginas web. A atividade demonstrou como selecionar elementos, modificar conteúdos, alterar estilos e reagir a eventos do usuário para tornar uma página mais dinâmica.
+
+Também foi possível compreender melhor a integração entre HTML5, CSS3 e JavaScript. O HTML organiza o conteúdo, o CSS define a apresentação visual e o JavaScript adiciona comportamento interativo. Em projetos futuros, esses conhecimentos podem ser aplicados para criar formulários mais completos, painéis personalizados, páginas com dados dinâmicos e experiências mais responsivas para o usuário.
+
+## 6. Anexos
+
+Os arquivos JavaScript, HTML e CSS estão anexados para revisão:
 
 - `index.html`
 - `styles.css`
+- `script.js`
 - `assets/horta-comunitaria.png`
-
