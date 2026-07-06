@@ -1,0 +1,10 @@
+target/
+out/
+*.class
+*.log
+.idea/
+.DS_Store
+.classpath
+.project
+.github/
+Desenvolvimento_BACK-END_Fase_2_RUP_MVC.pdf

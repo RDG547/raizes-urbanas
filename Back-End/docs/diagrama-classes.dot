@@ -1,0 +1,31 @@
+digraph classes {
+  graph [rankdir=LR, bgcolor="white", pad="0.2", nodesep="0.7", ranksep="0.9"];
+  node [shape=record, fontname="Arial", fontsize=10, style="rounded,filled", fillcolor="#f8fafc", color="#334155"];
+  edge [fontname="Arial", fontsize=9, color="#475569"];
+
+  Cliente [
+    label="{Cliente|id: String\lnome: String\lemail: String\ltelefone: String\lcriadoEm: LocalDateTime\latualizadoEm: LocalDateTime\l|marcarCriacao()\lmarcarAtualizacao()\l}"
+  ];
+
+  Produto [
+    label="{Produto|id: String\lnome: String\ldescricao: String\lpreco: BigDecimal\lestoque: int\l|possuiEstoque(qtd)\lbaixarEstoque(qtd)\l}"
+  ];
+
+  Pedido [
+    label="{Pedido|id: String\lclienteId: String\litens: List<ItemPedido>\lstatus: StatusPedido\ltotal: BigDecimal\l|definirItens(itens,total)\lmarcarAtualizacao()\l}"
+  ];
+
+  ItemPedido [
+    label="{ItemPedido|produtoId: String\lnomeProduto: String\lquantidade: int\lprecoUnitario: BigDecimal\lsubtotal: BigDecimal\l}"
+  ];
+
+  StatusPedido [
+    label="{\<\<enum\>\>\lStatusPedido|ABERTO\lPAGO\lCANCELADO\l}"
+  ];
+
+  Pedido -> Cliente [label="1 pedido referencia 1 cliente"];
+  Cliente -> Pedido [label="1 cliente possui 0..n pedidos", arrowhead="none"];
+  Pedido -> ItemPedido [label="1..n", arrowhead="diamond"];
+  ItemPedido -> Produto [label="referencia produto"];
+  Pedido -> StatusPedido [label="status"];
+}
