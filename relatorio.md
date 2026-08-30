@@ -1,61 +1,96 @@
 # Relatório de Desenvolvimento da Página Web
 
-**Curso:** Front-End
-**Projeto (disciplina):** Atividade Avaliativa Fase 2
-**Discente:** Rodrigo Tavares Vieira
+**Curso:** Análise e Desenvolvimento de Sistemas
+
+**Projeto (disciplina):** Desenvolvimento front-end
+
 **Nome do Aluno:** Rodrigo Tavares Vieira
-**Data:** 03 de julho de 2026
+
+**Data:** 29/08/26
+
 **Nome do Projeto:** Raízes Urbanas
 
 ## 1. Introdução
 
-O projeto **Raízes Urbanas** é uma página web criada para apresentar uma iniciativa de hortas comunitárias urbanas. O objetivo da página é divulgar a proposta do projeto, mostrar atividades da comunidade, oferecer dicas iniciais de participação e disponibilizar um formulário de inscrição para pessoas interessadas.
+O projeto **Raízes Urbanas** é uma página web dinâmica criada para apresentar uma iniciativa de hortas comunitárias urbanas. O objetivo da página é divulgar atividades, oferecer orientações de participação, permitir a personalização da interface e disponibilizar um formulário de inscrição para pessoas interessadas.
 
-A página se relaciona com os conteúdos estudados na Fase 2 porque aplica JavaScript para manipular elementos do DOM, responder a eventos do usuário, alterar conteúdo, modificar estilos visuais e validar dados do formulário antes do envio. Além disso, o projeto mantém os conhecimentos de HTML5 semântico e CSS3 responsivo já aplicados na etapa anterior.
+Na Fase 3, o projeto foi ampliado para integrar, em uma única solução, HTML5, CSS3 e JavaScript. Além das interações implementadas anteriormente, a página passou a consumir dados externos da API ViaCEP, exibir os resultados em tempo real e armazenar o histórico das consultas no Local Storage do navegador.
 
-Os principais elementos incluídos são cabeçalho com navegação interna e menu dropdown de personalização, seção principal com imagem, blocos informativos, cards de atividades, área de retorno das interações, informações de encontro e formulário de inscrição.
+Também foram aplicadas técnicas de otimização de desempenho. As imagens receberam versões em formato WebP, um conteúdo visual abaixo da dobra utiliza lazy loading e os arquivos CSS e JavaScript usados pela página foram minificados. Dessa forma, a nova versão reúne manipulação do DOM, consumo de API, persistência local, responsividade, acessibilidade e otimização.
 
 ## 2. Estrutura da Página Web
 
-A estrutura foi organizada em três arquivos principais: `index.html`, `styles.css` e `script.js`.
+A estrutura foi organizada nos arquivos principais `index.html`, `styles.css` e `script.js`. Para a versão carregada pelo navegador, também foram gerados `styles.min.css` e `script.min.js`, que mantêm o mesmo comportamento com um tamanho menor.
 
-O arquivo `index.html` utiliza elementos semânticos como `header`, `nav`, `main`, `section`, `article`, `aside`, `form` e `footer`. O cabeçalho possui links de navegação interna para as seções Sobre, Atividades, Dicas, Interação e Contato, além de um botão Personalizar que abre um menu dropdown com controles de tema, tamanho do texto e foco do encontro. A página também inclui um link de salto para o conteúdo principal, imagem com atributo `alt` e campos de formulário associados a seus respectivos rótulos.
+O arquivo `index.html` utiliza elementos semânticos como `header`, `nav`, `main`, `section`, `article`, `aside`, `form`, `figure` e `footer`. O cabeçalho oferece navegação interna para as áreas de conteúdo e um menu de personalização. A página possui seções sobre a iniciativa, atividades, boas práticas, interações, consulta de CEP e contato.
 
-O arquivo `styles.css` define a identidade visual, o layout responsivo, os estados dos botões, os temas visuais e a aparência das mensagens de validação. O arquivo `script.js` concentra a lógica interativa, selecionando elementos da página e alterando conteúdo, atributos e estilos com base nas ações do usuário.
+A seção de consulta contém um formulário com rótulo associado ao campo, teclado numérico sugerido em dispositivos móveis, padrão de validação, texto de ajuda e uma região de status com `aria-live`. O resultado é apresentado em uma lista de definições com logradouro, bairro, cidade, unidade federativa e CEP. Ao lado, um painel exibe o histórico persistente e uma imagem carregada sob demanda.
 
-## 3. Interações implementadas
+## 3. Manipulação do DOM
 
-Foram implementadas interações com diferentes eventos em JavaScript. Os controles de personalização ficam no cabeçalho, dentro de um menu dropdown. A primeira interação ocorre no botão Personalizar, que abre e fecha o menu usando JavaScript.
+O JavaScript seleciona os elementos da página com `document.getElementById` e `document.querySelectorAll`. Os eventos são registrados com `addEventListener`, mantendo o comportamento separado da marcação HTML.
 
-A segunda interação ocorre nos botões de tema visual. Ao clicar em Verde, Solar ou Noturno, o JavaScript altera o atributo `data-theme` do `body`, muda as variáveis de cor aplicadas pelo CSS e atualiza o texto explicativo da área de interação.
+No menu Personalizar, os botões de tema alteram o atributo `data-theme` do `body`, atualizam as variáveis de cor definidas no CSS e modificam o texto explicativo da seção de interação. O controle deslizante muda a variável `--base-font-size`, enquanto o seletor de foco troca dinamicamente o texto e a data do próximo encontro.
 
-A terceira interação ocorre no controle de tamanho de texto. Quando o usuário move o controle deslizante, o evento `input` altera dinamicamente a variável CSS `--base-font-size`, aplicada ao tamanho base da página, e atualiza o valor exibido na tela.
+O formulário de inscrição também reage às ações do usuário. A função de validação verifica nome, e-mail, área de interesse e autorização, adiciona ou remove classes de erro, atualiza o atributo `aria-invalid` e exibe mensagens específicas. Quando todos os dados estão válidos, o conteúdo da confirmação é criado com o primeiro nome informado.
 
-A quarta interação ocorre no seletor de foco do encontro. Ao escolher Plantio, Compostagem ou Mutirão, o evento `change` altera o texto da área em destaque e também modifica as informações do próximo encontro.
+Na consulta de CEP, o DOM é alterado para mostrar o estado de carregamento, bloquear temporariamente o botão, apresentar mensagens de sucesso ou erro e preencher os campos do endereço. O histórico é criado com `document.createElement`, `textContent`, `append` e `replaceChildren`. Cada item se transforma em um botão que recupera o endereço armazenado sem realizar outra requisição.
 
-Também foi adicionada validação de formulário. Ao tentar enviar a inscrição, o evento `submit` verifica se nome, e-mail, área de interesse e autorização foram preenchidos corretamente. Caso exista erro, o envio é impedido e mensagens específicas são exibidas. Caso os dados estejam corretos, uma mensagem de confirmação aparece para o usuário.
+## 4. Consumo da API ViaCEP
 
-## 4. Detalhamento técnico
+O consumo dos dados foi implementado no arquivo `script.js` por meio de uma função assíncrona. Antes da requisição, o valor digitado é normalizado com uma expressão regular que remove caracteres não numéricos. O acesso ao serviço somente ocorre quando o resultado contém exatamente oito dígitos.
 
-A manipulação do DOM foi feita no arquivo `script.js`. Foram utilizados métodos como `document.getElementById` para selecionar elementos específicos, como o botão de personalização, o menu dropdown, o parágrafo de status, o controle de tamanho, o seletor de foco, os textos do próximo encontro e os campos do formulário. Também foi utilizado `document.querySelectorAll` para selecionar todos os botões de tema.
+A requisição utiliza `fetch` no endereço `https://viacep.com.br/ws/{cep}/json/`. O código verifica `response.ok`, converte o corpo com `response.json()` e trata o campo `erro` devolvido pelo serviço quando um CEP de formato válido não existe.
 
-A estilização dinâmica acontece de duas formas. Na primeira, o JavaScript modifica `document.body.dataset.theme`, permitindo que o CSS aplique cores diferentes conforme o tema selecionado. Na segunda, o JavaScript altera a variável CSS `--base-font-size` com `document.documentElement.style.setProperty`, fazendo o controle de tamanho afetar a página.
+Para melhorar a experiência do usuário, foi adicionado um `AbortController` com limite de oito segundos. A interface apresenta mensagens diferentes para CEP inexistente, tempo excedido e falha de conexão. O bloco `finally` sempre remove o estado de carregamento e restaura o texto do botão, independentemente do resultado.
 
-Os eventos foram registrados com `addEventListener`. Foram usados eventos de `click` no botão do dropdown e nos botões de tema, `input` no controle de tamanho de texto, `change` no seletor de foco e nos campos do formulário, além de `submit` no formulário de inscrição.
+Quando a resposta é válida, somente os campos necessários são normalizados antes da exibição e do armazenamento: `cep`, `logradouro`, `bairro`, `localidade` e `uf`. Essa seleção reduz o acoplamento da interface ao restante dos dados fornecidos pelo serviço.
 
-Na validação, a função `validateField` verifica cada campo obrigatório e usa `classList.toggle`, `setAttribute` e `textContent` para marcar erros, atualizar `aria-invalid` e exibir mensagens de orientação. A função `validateForm` impede o envio padrão com `event.preventDefault()` quando há campos inválidos e exibe uma mensagem de sucesso quando os dados estão corretos.
+## 5. Persistência de Dados com Local Storage
 
-## 5. Conclusão
+O Local Storage é usado para manter o histórico das cinco consultas mais recentes. Cada registro contém os campos do endereço e a data da consulta. Antes de salvar um novo item, o código remove uma ocorrência anterior do mesmo CEP, coloca o resultado no início da lista e limita o conjunto ao tamanho definido.
 
-Durante o desenvolvimento deste projeto, foi possível consolidar os conhecimentos da Fase 2 sobre JavaScript aplicado a páginas web. A atividade demonstrou como selecionar elementos, modificar conteúdos, alterar estilos e reagir a eventos do usuário para tornar uma página mais dinâmica.
+Ao carregar a página, os dados são lidos com `localStorage.getItem`, convertidos com `JSON.parse`, validados e apresentados no painel de histórico. Se o usuário consultar novamente um CEP já armazenado, a página recupera o objeto localmente e evita uma nova chamada à API.
 
-Também foi possível compreender melhor a integração entre HTML5, CSS3 e JavaScript. O HTML organiza o conteúdo, o CSS define a apresentação visual e o JavaScript adiciona comportamento interativo. Em projetos futuros, esses conhecimentos podem ser aplicados para criar formulários mais completos, painéis personalizados, páginas com dados dinâmicos e experiências mais responsivas para o usuário.
+As funções de leitura e escrita usam `try...catch` para que a página continue funcionando mesmo quando o armazenamento estiver indisponível ou contiver dados inválidos. O botão Limpar remove a chave do histórico, esvazia a lista e atualiza imediatamente a interface.
 
-## 6. Anexos
+Além do histórico, o projeto persiste o tema visual, o tamanho de texto e o foco do encontro. Essas preferências são restauradas na próxima visita, demonstrando outra aplicação prática do armazenamento local.
 
-Os arquivos JavaScript, HTML e CSS estão anexados para revisão:
+## 6. Técnicas de Otimização
+
+A imagem principal original em PNG possuía aproximadamente 2,6 MB. Foi gerada uma versão WebP com as mesmas dimensões e cerca de 251 KB, reduzindo significativamente a transferência. O elemento `picture` oferece o WebP aos navegadores compatíveis e mantém o PNG como alternativa.
+
+A imagem complementar foi redimensionada para 720 por 480 pixels, convertida para WebP e inserida com `loading="lazy"` e `decoding="async"`. Assim, o navegador posterga o download desse conteúdo até que ele se aproxime da área visível. Os atributos `width` e `height` reservam o espaço necessário e ajudam a evitar mudanças inesperadas no layout.
+
+Como a imagem principal aparece no início da página, ela não usa lazy loading. Em vez disso, foi priorizada com preload e `fetchpriority="high"`, evitando atrasar o maior elemento visual da primeira tela.
+
+Os arquivos de produção `styles.min.css` e `script.min.js` foram gerados a partir dos arquivos-fonte. A minificação remove espaços e simplifica a representação do código, diminuindo o volume transferido sem prejudicar a versão legível mantida para manutenção.
+
+## 7. Conclusão
+
+Durante o desenvolvimento da Fase 3, foi possível consolidar a integração entre estrutura, apresentação, comportamento e dados externos. A atividade demonstrou como uma interface pode responder às ações do usuário, buscar informações em tempo real e preservar resultados entre diferentes acessos.
+
+O uso da API ViaCEP permitiu praticar operações assíncronas, validação de entrada e tratamento de falhas. O Local Storage mostrou como manter dados úteis no próprio navegador e reduzir requisições repetidas. As técnicas de otimização reforçaram que o desempenho depende tanto do código quanto das escolhas de imagens e da ordem de carregamento dos recursos.
+
+Esses conhecimentos podem ser aplicados em projetos futuros que utilizem catálogos, painéis, cadastros e consultas a serviços externos. A combinação de acessibilidade, responsividade, persistência e desempenho contribui para páginas mais eficientes e agradáveis em diferentes dispositivos e condições de conexão.
+
+## 8. Anexos
+
+Os arquivos HTML, CSS, JavaScript e imagens estão anexados para revisão:
 
 - `index.html`
 - `styles.css`
+- `styles.min.css`
 - `script.js`
+- `script.min.js`
 - `assets/horta-comunitaria.png`
+- `assets/horta-comunitaria.webp`
+- `assets/horta-detalhe.webp`
+
+**Repositório:**
+
+https://github.com/RDG547/raizes-urbanas
+
+**Página publicada:**
+
+https://rdg547.github.io/raizes-urbanas/

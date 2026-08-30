@@ -10,6 +10,25 @@ const eventDate = document.getElementById("evento-data");
 const eventDescription = document.getElementById("evento-descricao");
 const form = document.getElementById("formulario-inscricao");
 const formFeedback = document.getElementById("form-feedback");
+const cepForm = document.getElementById("formulario-cep");
+const cepInput = document.getElementById("cep");
+const cepButton = document.getElementById("consultar-cep");
+const cepFeedback = document.getElementById("cep-feedback");
+const addressResult = document.getElementById("resultado-cep");
+const resultStreet = document.getElementById("resultado-logradouro");
+const resultDistrict = document.getElementById("resultado-bairro");
+const resultCity = document.getElementById("resultado-cidade");
+const resultCep = document.getElementById("resultado-numero-cep");
+const historyList = document.getElementById("historico-cep");
+const emptyHistory = document.getElementById("historico-vazio");
+const clearHistoryButton = document.getElementById("limpar-historico");
+
+const persistentStore = window.localStorage;
+const SAVED_DATA_KEYS = {
+  preferences: "raizesUrbanasPreferencesV1",
+  cepHistory: "raizesUrbanasCepHistoryV1"
+};
+const MAX_HISTORY_ITEMS = 5;
 
 const themeContent = {
   verde: {
@@ -44,6 +63,29 @@ const focusContent = {
   }
 };
 
+function readSavedData(key, fallbackValue) {
+  try {
+    const storedValue = persistentStore.getItem(key);
+    return storedValue ? JSON.parse(storedValue) : fallbackValue;
+  } catch {
+    return fallbackValue;
+  }
+}
+
+function writeSavedData(key, value) {
+  try {
+    persistentStore.setItem(key, JSON.stringify(value));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function updatePreferences(changes) {
+  const currentPreferences = readSavedData(SAVED_DATA_KEYS.preferences, {});
+  writeSavedData(SAVED_DATA_KEYS.preferences, { ...currentPreferences, ...changes });
+}
+
 function toggleCustomizeMenu() {
   const isExpanded = customizeToggle.getAttribute("aria-expanded") === "true";
 
@@ -56,33 +98,60 @@ function closeCustomizeMenu() {
   customizeMenu.hidden = true;
 }
 
-function applyTheme(themeName) {
-  const selectedTheme = themeContent[themeName];
+function applyTheme(themeName, persist = true) {
+  const validTheme = themeContent[themeName] ? themeName : "verde";
+  const selectedTheme = themeContent[validTheme];
 
-  document.body.dataset.theme = themeName;
+  document.body.dataset.theme = validTheme;
   statusText.textContent = selectedTheme.message;
   statusText.style.color = selectedTheme.color;
 
   themeButtons.forEach((button) => {
-    const isCurrentTheme = button.dataset.theme === themeName;
+    const isCurrentTheme = button.dataset.theme === validTheme;
     button.classList.toggle("is-active", isCurrentTheme);
     button.setAttribute("aria-pressed", String(isCurrentTheme));
   });
+
+  if (persist) {
+    updatePreferences({ theme: validTheme });
+  }
 }
 
-function updateTextSize() {
-  const size = `${textSizeInput.value}px`;
+function updateTextSize(persist = true) {
+  const numericSize = Math.min(22, Math.max(16, Number(textSizeInput.value) || 16));
+  const size = `${numericSize}px`;
 
+  textSizeInput.value = String(numericSize);
   document.documentElement.style.setProperty("--base-font-size", size);
   textSizeOutput.textContent = size;
+
+  if (persist) {
+    updatePreferences({ textSize: numericSize });
+  }
 }
 
-function updateCommunityFocus() {
-  const selectedFocus = focusContent[focusSelect.value];
+function updateCommunityFocus(persist = true) {
+  const validFocus = focusContent[focusSelect.value] ? focusSelect.value : "plantio";
+  const selectedFocus = focusContent[validFocus];
 
+  focusSelect.value = validFocus;
   focusResult.textContent = selectedFocus.result;
   eventDate.textContent = selectedFocus.date;
   eventDescription.textContent = selectedFocus.description;
+
+  if (persist) {
+    updatePreferences({ communityFocus: validFocus });
+  }
+}
+
+function restorePreferences() {
+  const preferences = readSavedData(SAVED_DATA_KEYS.preferences, {});
+
+  textSizeInput.value = String(preferences.textSize || 16);
+  focusSelect.value = preferences.communityFocus || "plantio";
+  applyTheme(preferences.theme || "verde", false);
+  updateTextSize(false);
+  updateCommunityFocus(false);
 }
 
 function setFieldState(field, feedbackElement, message) {
@@ -154,10 +223,173 @@ function validateForm(event) {
 
   const firstName = document.getElementById("nome").value.trim().split(" ")[0];
 
-  formFeedback.textContent = `Inscrição recebida, ${firstName}. Em breve enviaremos novidades do projeto.`;
+  formFeedback.textContent = `Inscrição recebida, ${firstName}. Em breve enviaremos as próximas atividades.`;
   formFeedback.classList.add("is-success");
   form.reset();
   requiredFields.forEach((field) => clearFieldState(field));
+}
+
+function onlyCepDigits(value) {
+  return value.replace(/\D/g, "").slice(0, 8);
+}
+
+function formatCep(value) {
+  const digits = onlyCepDigits(value);
+  return digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
+}
+
+function normalizeHistoryEntry(entry) {
+  if (!entry || !/^\d{8}$/.test(onlyCepDigits(entry.cep || ""))) {
+    return null;
+  }
+
+  return {
+    cep: formatCep(entry.cep),
+    logradouro: String(entry.logradouro || "Não informado"),
+    bairro: String(entry.bairro || "Não informado"),
+    localidade: String(entry.localidade || "Não informado"),
+    uf: String(entry.uf || ""),
+    consultedAt: String(entry.consultedAt || "")
+  };
+}
+
+const storedCepHistory = readSavedData(SAVED_DATA_KEYS.cepHistory, []);
+let cepHistory = (Array.isArray(storedCepHistory) ? storedCepHistory : [])
+  .map(normalizeHistoryEntry)
+  .filter(Boolean)
+  .slice(0, MAX_HISTORY_ITEMS);
+
+function setCepFeedback(message, type = "error") {
+  cepFeedback.textContent = message;
+  cepFeedback.classList.toggle("is-success", type === "success");
+}
+
+function setCepLoading(isLoading) {
+  cepForm.setAttribute("aria-busy", String(isLoading));
+  cepButton.disabled = isLoading;
+  cepButton.textContent = isLoading ? "Consultando..." : "Consultar";
+}
+
+function displayAddress(address) {
+  resultStreet.textContent = address.logradouro;
+  resultDistrict.textContent = address.bairro;
+  resultCity.textContent = address.uf ? `${address.localidade}/${address.uf}` : address.localidade;
+  resultCep.textContent = address.cep;
+  addressResult.hidden = false;
+}
+
+function historyAddressLine(address) {
+  const location = address.uf ? `${address.localidade}/${address.uf}` : address.localidade;
+  return `${address.logradouro} — ${location}`;
+}
+
+function renderCepHistory() {
+  historyList.replaceChildren();
+  const hasHistory = cepHistory.length > 0;
+
+  emptyHistory.hidden = hasHistory;
+  clearHistoryButton.hidden = !hasHistory;
+
+  cepHistory.forEach((address) => {
+    const listItem = document.createElement("li");
+    const button = document.createElement("button");
+    const cepText = document.createElement("strong");
+    const addressText = document.createElement("span");
+
+    button.type = "button";
+    button.className = "history-item-button";
+    button.dataset.cep = onlyCepDigits(address.cep);
+    button.setAttribute("aria-label", `Abrir endereço do CEP ${address.cep}`);
+    cepText.textContent = address.cep;
+    addressText.textContent = historyAddressLine(address);
+    button.append(cepText, addressText);
+    listItem.append(button);
+    historyList.append(listItem);
+  });
+}
+
+function saveAddressToHistory(address) {
+  const normalizedAddress = normalizeHistoryEntry(address);
+
+  cepHistory = [
+    normalizedAddress,
+    ...cepHistory.filter((item) => onlyCepDigits(item.cep) !== onlyCepDigits(normalizedAddress.cep))
+  ].slice(0, MAX_HISTORY_ITEMS);
+
+  writeSavedData(SAVED_DATA_KEYS.cepHistory, cepHistory);
+  renderCepHistory();
+}
+
+function findAddressInHistory(cep) {
+  return cepHistory.find((item) => onlyCepDigits(item.cep) === cep);
+}
+
+async function consultCep(event) {
+  event.preventDefault();
+  const cep = onlyCepDigits(cepInput.value);
+
+  cepInput.value = formatCep(cep);
+  cepInput.setAttribute("aria-invalid", String(cep.length !== 8));
+  addressResult.hidden = true;
+
+  if (cep.length !== 8) {
+    setCepFeedback("Informe um CEP válido com oito números.");
+    cepInput.focus();
+    return;
+  }
+
+  const cachedAddress = findAddressInHistory(cep);
+  if (cachedAddress) {
+    displayAddress(cachedAddress);
+    setCepFeedback("Endereço recuperado do histórico deste navegador.", "success");
+    return;
+  }
+
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), 8000);
+
+  setCepLoading(true);
+  setCepFeedback("Consultando o endereço...", "success");
+
+  try {
+    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`, {
+      signal: controller.signal
+    });
+
+    if (!response.ok) {
+      throw new Error("HTTP_ERROR");
+    }
+
+    const data = await response.json();
+
+    if (data.erro === true || data.erro === "true") {
+      throw new Error("CEP_NOT_FOUND");
+    }
+
+    const address = normalizeHistoryEntry({
+      cep: data.cep || cep,
+      logradouro: data.logradouro,
+      bairro: data.bairro,
+      localidade: data.localidade,
+      uf: data.uf,
+      consultedAt: new Date().toISOString()
+    });
+
+    displayAddress(address);
+    saveAddressToHistory(address);
+    setCepFeedback("Consulta concluída e salva no histórico.", "success");
+  } catch (error) {
+    if (error.message === "CEP_NOT_FOUND") {
+      setCepFeedback("Não encontramos esse CEP. Confira os números informados.");
+    } else if (error.name === "AbortError") {
+      setCepFeedback("A consulta demorou mais que o esperado. Tente novamente.");
+    } else {
+      setCepFeedback("Não foi possível consultar o endereço agora. Verifique sua conexão e tente novamente.");
+    }
+  } finally {
+    window.clearTimeout(timeoutId);
+    setCepLoading(false);
+  }
 }
 
 themeButtons.forEach((button) => {
@@ -165,9 +397,42 @@ themeButtons.forEach((button) => {
 });
 
 customizeToggle.addEventListener("click", toggleCustomizeMenu);
-textSizeInput.addEventListener("input", updateTextSize);
-focusSelect.addEventListener("change", updateCommunityFocus);
+textSizeInput.addEventListener("input", () => updateTextSize());
+focusSelect.addEventListener("change", () => updateCommunityFocus());
 form.addEventListener("submit", validateForm);
+cepForm.addEventListener("submit", consultCep);
+
+cepInput.addEventListener("input", () => {
+  cepInput.value = formatCep(cepInput.value);
+  cepInput.setAttribute("aria-invalid", "false");
+  setCepFeedback("");
+});
+
+historyList.addEventListener("click", (event) => {
+  const historyButton = event.target.closest(".history-item-button");
+  if (!historyButton) {
+    return;
+  }
+
+  const address = findAddressInHistory(historyButton.dataset.cep);
+  if (address) {
+    cepInput.value = address.cep;
+    displayAddress(address);
+    setCepFeedback("Endereço recuperado do histórico deste navegador.", "success");
+  }
+});
+
+clearHistoryButton.addEventListener("click", () => {
+  cepHistory = [];
+  try {
+    persistentStore.removeItem(SAVED_DATA_KEYS.cepHistory);
+  } catch {
+    // A interface continua funcional mesmo quando o armazenamento é bloqueado.
+  }
+  renderCepHistory();
+  addressResult.hidden = true;
+  setCepFeedback("Histórico de consultas removido.", "success");
+});
 
 document.addEventListener("click", (event) => {
   const clickedInsideMenu = customizeMenu.contains(event.target);
@@ -198,6 +463,5 @@ form.addEventListener("change", (event) => {
   }
 });
 
-applyTheme("verde");
-updateTextSize();
-updateCommunityFocus();
+restorePreferences();
+renderCepHistory();

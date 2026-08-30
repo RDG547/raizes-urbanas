@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Página responsiva sobre hortas comunitárias urbanas, criada com HTML5 semântico, CSS3 e JavaScript.">
+  <meta name="description" content="Raízes Urbanas reúne hortas comunitárias, oficinas, mutirões e oportunidades de participação no bairro.">
   <title>Raízes Urbanas | Hortas Comunitárias</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="script.js" defer></script>
+  <link rel="preload" href="assets/horta-comunitaria.webp" as="image" type="image/webp" fetchpriority="high">
+  <link rel="stylesheet" href="styles.min.css">
+  <script src="script.min.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Ir para o conteúdo principal</a>
@@ -22,6 +23,7 @@
             <li><a href="#atividades">Atividades</a></li>
             <li><a href="#dicas">Dicas</a></li>
             <li><a href="#interacao">Interação</a></li>
+            <li><a href="#consulta">Buscar CEP</a></li>
             <li><a href="#contato">Contato</a></li>
           </ul>
         </nav>
@@ -71,13 +73,18 @@
 
   <main id="conteudo">
     <section class="hero" id="inicio" aria-labelledby="titulo-principal">
-      <img
-        class="hero-image"
-        src="assets/horta-comunitaria.png"
-        alt="Pessoas cuidando de canteiros em uma horta comunitária urbana durante uma manhã ensolarada."
-        width="1672"
-        height="941"
-      >
+      <picture>
+        <source srcset="assets/horta-comunitaria.webp" type="image/webp">
+        <img
+          class="hero-image"
+          src="assets/horta-comunitaria.png"
+          alt="Pessoas cuidando de canteiros em uma horta comunitária urbana durante uma manhã ensolarada."
+          width="1672"
+          height="941"
+          decoding="async"
+          fetchpriority="high"
+        >
+      </picture>
       <div class="hero-content">
         <p class="eyebrow">Comunidade, alimento e sustentabilidade</p>
         <h1 id="titulo-principal">Raízes Urbanas</h1>
@@ -85,24 +92,22 @@
           Um espaço informativo para incentivar hortas comunitárias, educação ambiental
           e participação dos moradores na transformação de áreas urbanas.
         </p>
-        <a class="button" href="#contato">Participar do projeto</a>
+        <a class="button" href="#contato">Participar da iniciativa</a>
       </div>
     </section>
 
     <section class="section split-section" id="sobre" aria-labelledby="sobre-titulo">
       <div>
-        <p class="section-kicker">Sobre o projeto</p>
-        <h2 id="sobre-titulo">Uma página para aproximar pessoas da agricultura urbana</h2>
+        <p class="section-kicker">Sobre a iniciativa</p>
+        <h2 id="sobre-titulo">Agricultura urbana que aproxima pessoas</h2>
         <p>
-          A página Raízes Urbanas apresenta informações sobre hortas comunitárias,
+          Raízes Urbanas reúne moradores interessados em hortas comunitárias,
           reaproveitamento de espaços e ações coletivas para tornar o bairro mais
-          saudável. O conteúdo foi organizado para ser lido com facilidade em celulares,
-          tablets e computadores.
+          saudável, acolhedor e sustentável.
         </p>
         <p>
-          O projeto utiliza HTML5 semântico para estruturar o conteúdo, CSS3 para
-          criar uma identidade visual clara e JavaScript para adicionar interações
-          com o usuário.
+          A iniciativa compartilha orientações práticas, divulga encontros e ajuda
+          novos voluntários a encontrar a melhor forma de participar.
         </p>
       </div>
 
@@ -187,13 +192,93 @@
       </aside>
     </section>
 
+    <section class="section address-section" id="consulta" aria-labelledby="consulta-titulo">
+      <div class="address-intro">
+        <p class="section-kicker">Consulta em tempo real</p>
+        <h2 id="consulta-titulo">Encontre um endereço para a próxima horta</h2>
+        <p>
+          Informe um CEP brasileiro para encontrar a região de uma próxima ação.
+          Suas pesquisas recentes ficam disponíveis neste navegador para facilitar
+          novas consultas.
+        </p>
+
+        <form class="cep-form" id="formulario-cep" novalidate>
+          <label for="cep">CEP</label>
+          <div class="cep-input-row">
+            <input
+              id="cep"
+              name="cep"
+              type="text"
+              inputmode="numeric"
+              autocomplete="postal-code"
+              placeholder="00000-000"
+              maxlength="9"
+              pattern="[0-9]{5}-?[0-9]{3}"
+              aria-describedby="cep-ajuda cep-feedback"
+              required
+            >
+            <button class="button" id="consultar-cep" type="submit">Consultar</button>
+          </div>
+          <small id="cep-ajuda">Digite os oito números do CEP, com ou sem hífen.</small>
+          <p class="api-feedback" id="cep-feedback" role="status" aria-live="polite"></p>
+        </form>
+
+        <article class="address-result" id="resultado-cep" aria-labelledby="resultado-cep-titulo" hidden>
+          <p class="result-label">Endereço encontrado</p>
+          <h3 id="resultado-cep-titulo">Resultado da consulta</h3>
+          <dl class="address-data">
+            <div>
+              <dt>Logradouro</dt>
+              <dd id="resultado-logradouro">—</dd>
+            </div>
+            <div>
+              <dt>Bairro</dt>
+              <dd id="resultado-bairro">—</dd>
+            </div>
+            <div>
+              <dt>Cidade/UF</dt>
+              <dd id="resultado-cidade">—</dd>
+            </div>
+            <div>
+              <dt>CEP</dt>
+              <dd id="resultado-numero-cep">—</dd>
+            </div>
+          </dl>
+        </article>
+      </div>
+
+      <aside class="history-panel" aria-labelledby="historico-titulo">
+        <div class="history-heading">
+          <div>
+            <p class="section-kicker">Consultas recentes</p>
+            <h3 id="historico-titulo">Histórico de consultas</h3>
+          </div>
+          <button class="text-button" id="limpar-historico" type="button" hidden>Limpar</button>
+        </div>
+        <p class="empty-history" id="historico-vazio">Nenhum CEP consultado neste navegador.</p>
+        <ul class="history-list" id="historico-cep" aria-label="CEPs consultados"></ul>
+
+        <figure class="lazy-figure">
+          <img
+            src="assets/horta-detalhe.webp"
+            alt="Mãos de voluntários cuidando de mudas em uma horta comunitária."
+            width="720"
+            height="480"
+            loading="lazy"
+            decoding="async"
+          >
+          <figcaption>Cada muda cultivada em conjunto ajuda a transformar o bairro.</figcaption>
+        </figure>
+      </aside>
+    </section>
+
     <section class="section contact-section" id="contato" aria-labelledby="contato-titulo">
       <div class="contact-copy">
         <p class="section-kicker">Contato</p>
         <h2 id="contato-titulo">Inscreva-se para receber novidades</h2>
         <p>
-          O formulário usa campos obrigatórios, tipos adequados de entrada e textos de
-          apoio para facilitar o preenchimento por diferentes usuários.
+          Conte como gostaria de participar. Nossa equipe entrará em contato com
+          informações sobre encontros, oficinas e mutirões.
         </p>
       </div>
 
@@ -244,7 +329,7 @@
 
           <div class="checkbox-field">
             <input id="autorizacao" name="autorizacao" type="checkbox" required aria-describedby="autorizacao-feedback">
-            <label for="autorizacao">Autorizo o contato por e-mail sobre as atividades do projeto.</label>
+            <label for="autorizacao">Autorizo o contato por e-mail sobre as atividades do Raízes Urbanas.</label>
             <small class="field-message checkbox-message" id="autorizacao-feedback"></small>
           </div>
 
@@ -256,8 +341,8 @@
   </main>
 
   <footer class="site-footer">
-    <p>Projeto acadêmico desenvolvido por Rodrigo Tavares Vieira.</p>
-    <p>Raízes Urbanas - HTML5, CSS3, JavaScript, acessibilidade e responsividade.</p>
+    <p>© 2026 Raízes Urbanas.</p>
+    <p>Comunidade, cultivo coletivo e transformação urbana.</p>
   </footer>
 </body>
 </html>
